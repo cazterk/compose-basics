@@ -1,6 +1,7 @@
 package com.example.compose_basics
 
 import android.accounts.AuthenticatorDescription
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,6 +16,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.AndroidPaint
@@ -38,6 +40,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.compose_basics.ui.theme.ComposebasicsTheme
+import kotlin.random.Random
+import androidx.compose.runtime.mutableStateOf as mutableStateOf
 
 val fontFamily = FontFamily(
     Font(R.font.lexend_thin, FontWeight.Thin),
@@ -67,7 +71,26 @@ class MainActivity : ComponentActivity() {
 //                    title = title )
 //            }
 
-            StyledText()
+//            StyledText()
+
+            Column(Modifier.fillMaxSize()) {
+                val color = remember {
+                  mutableStateOf( Color.Yellow)
+                }
+                ColorBox(
+
+                    Modifier
+                        .weight(1f)
+                        .fillMaxSize()
+                ){
+                    color.value = it
+                }
+                Box(modifier = Modifier
+                    .background(color.value)
+                    .weight(1f)
+                    .fillMaxSize()
+                )
+            }
 
 
         }
@@ -75,6 +98,7 @@ class MainActivity : ComponentActivity() {
 }
 
 
+// styling text
 @Composable
 fun StyledText(){
     Box(modifier = Modifier
@@ -111,6 +135,8 @@ fun StyledText(){
         )
     }
 }
+
+// image card
 @Composable
 fun ImageCard(
     painter: Painter,
@@ -152,5 +178,29 @@ fun ImageCard(
         }
         }
     }
+}
+
+// state
+
+
+@Composable
+fun ColorBox(
+    modifier: Modifier = Modifier,
+    updateColor: (Color) -> Unit
+
+){
+
+    Box(modifier = modifier
+        .background(Color.Red)
+        .clickable {
+           updateColor(
+               Color(
+                   Random.nextInt(),
+                   Random.nextInt(),
+                   Random.nextInt(),
+               )
+           )
+        }
+    )
 }
 
