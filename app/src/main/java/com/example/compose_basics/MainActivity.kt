@@ -1,28 +1,20 @@
 package com.example.compose_basics
 
-import android.accounts.AuthenticatorDescription
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.AndroidPaint
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -36,10 +28,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.compose_basics.ui.theme.ComposebasicsTheme
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 import androidx.compose.runtime.mutableStateOf as mutableStateOf
 
@@ -53,44 +44,17 @@ val fontFamily = FontFamily(
     Font(R.font.lexend_extrabold, FontWeight.ExtraBold)
 
 )
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-//            val painter = painterResource(id = R.drawable.img)
-//            val description = "While image"
-//            val title = "White image that i selected"
-//            Box(modifier = Modifier
-//                .fillMaxWidth(0.5f)
-//                .padding(16.dp)
-//            ){
-//                ImageCard(
-//                    painter = painter ,
-//                    contentDescription = description ,
-//                    title = title )
-//            }
-
+//            DisplayImageCard()
+//            BasicState()
 //            StyledText()
+//            Controls()
 
-            Column(Modifier.fillMaxSize()) {
-                val color = remember {
-                  mutableStateOf( Color.Yellow)
-                }
-                ColorBox(
-
-                    Modifier
-                        .weight(1f)
-                        .fillMaxSize()
-                ){
-                    color.value = it
-                }
-                Box(modifier = Modifier
-                    .background(color.value)
-                    .weight(1f)
-                    .fillMaxSize()
-                )
-            }
 
 
         }
@@ -180,8 +144,45 @@ fun ImageCard(
     }
 }
 
+@Composable
+fun DisplayImageCard(){
+    val painter = painterResource(id = R.drawable.img)
+    val description = "While image"
+    val title = "White image that i selected"
+    Box(modifier = Modifier
+        .fillMaxWidth(0.5f)
+        .padding(16.dp)
+    ){
+        ImageCard(
+            painter = painter ,
+            contentDescription = description ,
+            title = title )
+    }
+}
+
 // state
 
+@Composable
+fun BasicState(){
+    Column(Modifier.fillMaxSize()) {
+        val color = remember {
+            mutableStateOf( Color.Yellow)
+        }
+        ColorBox(
+
+            Modifier
+                .weight(1f)
+                .fillMaxSize()
+        ){
+            color.value = it
+        }
+        Box(modifier = Modifier
+            .background(color.value)
+            .weight(1f)
+            .fillMaxSize()
+        )
+    }
+}
 
 @Composable
 fun ColorBox(
@@ -193,14 +194,57 @@ fun ColorBox(
     Box(modifier = modifier
         .background(Color.Red)
         .clickable {
-           updateColor(
-               Color(
-                   Random.nextInt(),
-                   Random.nextInt(),
-                   Random.nextInt(),
-               )
-           )
+            updateColor(
+                Color(
+                    Random.nextInt(),
+                    Random.nextInt(),
+                    Random.nextInt(),
+                )
+            )
         }
     )
+}
+
+// textfields, buttons & showing snackbars
+@Composable
+fun Controls(){
+    val scaffoldState = rememberScaffoldState()
+    var textFieldState by remember{
+        mutableStateOf("")
+    }
+    val scope = rememberCoroutineScope()
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        scaffoldState =scaffoldState
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 30.dp)
+        ) {
+            TextField(
+                value = textFieldState,
+                label = {
+                    Text("Enter your name")
+                },
+                onValueChange = {
+                    textFieldState = it
+                },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = {
+                scope.launch {
+                    scaffoldState.snackbarHostState.showSnackbar("Hello $textFieldState")
+                }
+            }) {
+                Text("Please Great me")
+            }
+        }
+    }
 }
 
