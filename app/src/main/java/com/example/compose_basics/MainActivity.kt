@@ -63,8 +63,9 @@ class MainActivity : ComponentActivity() {
 //            StyledText()
 //            Controls()
 //            ListLayouts()
-//              ConstraintLayouts()
-            SimpleAnimations()
+//            ConstraintLayouts()
+//            SimpleAnimations()
+            Navigation()
 
 
         }
